@@ -1,0 +1,213 @@
+---
+title: "Sheild_Quant_final"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Final Exam
+# Ellie Sheild
+
+## Introduction
+
+I would like to thank the Broadway Business Coalition for hiring me as an analyist.
+
+In my previous role as Senior Planner for the City of Albemarle, NC we conducted a comprehensive parking study of our downtown. Business owners in our historic downtown district expressed significant apprehension over changing from two-way streets North-South streets to one-way and changing from parallel parking spaces to diagonal parking spaces, which would increase the number of available spaces. There was also strong political opinions from Council on metering downtown spaces. 
+
+I have experienced first hand how data on impacts to local business on parking changes can help provide clarity for planning issues,and appreciate this opportunity to run an analsysis using R.
+
+## Disclaimer
+
+I also feel it is important to acknowledged my own biases and limitations as a researcher in presenting this data. In my below data report, I will strive to clearly summarize and present in the most objective manner possible. However, there could be measurement errors, sampling errors, and modeling errors with this report the following 4 questions the Coalition has asked me to research.
+
+There are benefits to mixed methods approach that includes both quantitative and qualitative data. Thus, I encourage the Commission to supplement the quantitative data with qualitative research on the desires of customers for each of their businesses. 
+
+## Data Source
+
+The following data was obtained from the City of Townsville. It includes data collected between March, immediately prior to construction of the Main Street Redesign, and October, one month after the Main Street Redesign was completed.
+
+The following variables 6 were collected:
+
+* % Change in sales at each Main Street Business
+* Change in distance from each business to nearest transit stop
+* Type of business - this is an example of a categorical variable
+* Change in the cost of parking adjacent to the business
+* Change in the number of curbside parking spaces adjacent to the business
+* % Change in average daily bike traffic on the block adjacent to the sire.
+
+
+# Setup
+
+## Load Libraries
+
+```{r load libraries, message=FALSE}
+
+library(tidyverse)
+library(interactions)
+
+```
+
+## Load Data
+
+```{r, message=FALSE}
+
+Main_St_data <- read.csv("finalexam_sampledata.csv")
+```
+
+# Question 1:
+
+What is the average change in sales for Main Street businesses? Did sales increase or decrease, on average? How confident are you about that.
+
+The best method for solving question 1 is to run a one sample t-test *insert definition on what a t-test is so I can show understanding 
+
+```{r, message=FALSE}
+
+t.test(Main_St_data$pct_sales_chng)
+
+```
+
+*insert description of results
+
+The mean from the T-test shoes a ___  average increase/decrease in sales on. The 95% confidence interval from this T-test is __ to ___ percent, and it does not cross zero. The P-value is the likelihood that you would have gotten the result without a correlation. In this case the P Value is ___. Because this is *less or more_  than .001 we can be more than ____99%__ confident that the sales did increase/decrease on average. This meets__or does not meet__ the social sciences standard of a 95% confidence interval. The R squared value indicates the model fit.
+
+
+# Question 2
+
+Did the cost of parking change more for some types of businesses than for others? How confident are you about those differences?
+
+Best method to solve is to run a Bi-variate regression. A bi-variate relationship is between 2 variables. Put simply, a regression, which is all about prediction on an average, is a method for determining the relationship between quantifiable variables. It is prudent to first identify the most common store type in the data set, which is ____. In order to that This is the base case type that all other business types get compared to.
+
+## Types of Stores
+
+The below table says that ___ stores are the most common type.
+
+
+```{r}
+
+Main_St_data %>%
+  group_by(type) %>%
+  summarise(number = n()) %>%
+  mutate(percent = round(100 *number / sum(number))) %>%
+  arrange(desc(number))
+
+```
+
+## Relevel code
+
+Because __ stores are the most common, and our base case, we now use the relevel code to compare the other types of stores back to that in our bivariate regression.
+
+```{r}
+Main_St_data <- Main_St_data %>%
+  mutate(type = as.factor(type)) %>%
+  mutate(type = relevel(type, "Clothing"))
+```
+
+
+## Bivariate Regression
+
+```{r}
+parking_cost_by_type <- lm(parking_cost_change ~ type, data = Main_St_data)
+
+summary(parking_cost_by_type)
+```
+
+The intercept is what says tghe average change in parking cost for the base case was an increase/decrease of __ percentage points. After that we compare all the different types of stores to that.
+
+The base case,___,  saw a positive/negative change.
+
+Bookstores parking costs increase/decrease __ percentage points  more than the base case. Drugstores's parking costs increase/decrease _ _ percentage points more than the base case. Furniture's parking costs increase/decrease percentage points  more than the base case. Gas Station, Grocery stores, and Resaurants, increase/decrease, X, X, X percentage points, respectively.
+
+The following variables are statistically significant, because the P value is less than 0.05. 
+
+We are at least 95% confident that the __ stores had significant changes in parking costs.
+
+# Question 3
+
+Not counting any kind of effect of the changes to parking and cycling have had, what kind of effect did it have on businesses if the closest transit stop got closer or further away?
+
+In this question, we assess the effect of transit stop distance to the business of sales. By not "counting any kind of effect," it means we are controlling for those variables. The below code controls for the variables of changes to parking supply, changes in parking price, and any additional changes in cycling traffic to take them into consideration.
+
+This means it is best to run a regression model, lm function, to predict the effects of the change in distance to transit on the percent change in sales.
+
+
+*keep in mind the unit is in miles
+
+```{r}
+
+model_q3 <- lm(pct_sales_chng ~ transit_dist + parking_cost_change + lost_parking + bike_chng, data = Main_St_data)
+
+summary(model_q3)
+
+```
+
+
+For every 1 mile increase in the distance from a transit stop, sales increase/decrease by _ percentage points. This controls for parking cost change, lost parking, and bike changes. 
+
+This is/is not statistically significant. 
+
+# Question 4
+
+Was the effect of transit on sales different for some types of businesses than for others? What was the difference, if any?
+
+The most sound way to address this question is with a regression model that includes an interaction between transit distance and business type. This question considers whether the effect of transit stores impacts different types of businesses sales in different ways. An Interaction is like a test to see the relationship between one of your dependent variables, percent change in sales, and independent variables, transit. Like above, this model also controls for parking supply, parking price, and cycle traffic. It is the "type" portion of the code that adds the interaction test to the function.
+
+The summary function is what produces a table to interpret.
+
+```{r}
+model_q4 <- lm(pct_sales_chng ~ type + transit_dist + parking_cost_change + lost_parking + bike_chng + type:transit_dist, data = Main_St_data)
+
+summary(model_q4)
+```
+
+
+In interpreting this model, it is best to first look at the effect of distransit distance on the base case, which is ___. Each additional increase of one mile from a transit stop, _ stores sales decrease/increase by ---- percentage points. This is(isnot) statistically significant at the 95% confidence interval, as indicated by the P value.
+
+The Adjusted R Square of this regression --- indicates the model fit/prediction, which can be also be compared to the model above.
+
+## Displaying these results
+
+The added visual was helpful on my group work for quant, and is a good way to confirm my interpretions of results from the regression model, so I have elected to display these results and then provide interpretations for each store type below. 
+
+```{r}
+
+interact_plot(model_q4, pred = transit_dist, interval = TRUE, modx = type)
+
+```
+
+
+Now that we know the effect of transit distance to percent change in sales on the base case, we compare the other types of stores to the base case.
+
+The visual (steepness/slope of the curve) is also a good indicator of the effect of transit distance on percent change in sales. The steeper the curve, the greater the effect of transit distance on sales.  All other types are positive/negative, which measn the % change in sales impacted by transit distant was LESS/MORE for each of those store types. If it is the same signs (+,-) it magnififes the effect of transit distance, if it is the opposite sign, it diminishes the effect of transit distance
+
+### Book Stores 
+
+For example, Book stores value is .0757, meaning that the impact was 7.57 percentage points LESS than Clothing stores. When you take -.314 + .076 = -.238. So Book stores sales deceased 23.8 percentage points for every 1 mile increase of distance to transit stops. However, this is not statically significant. 
+
+### Drug Stores
+
+This relationship is NOT statistically significant, as indicated by a higher P value, and does not meet the social sciences threshold of a 95% confidence interval. 
+
+### Furniture Stores 
+
+Furniture Stores is statiscally significant. When compared to the base case, -.3138 + .3104 = 0.0034. So for furniture stores, there is a .34 percentage change in sales for every 1 mile increase in transit stops. Because this number is basically 0, and is statically significant, we can conclude that for every 1 mile increase in transit stops, % change in sales for furniture stores was more or less unaffected. If the slope is close to zero, there is no relationship between the two variables.
+
+### Gas Stations
+
+This is(isnot) Statistically significant. (-.3138 + .3447 = .0309) So for everyone 1 mile increase in distance from a transit stop gas station sales increased/decreased by 3 percentage points.
+
+### Grocery Stores
+
+add text
+
+### Restaurants 
+
+add text
+
+# Thank you
+
+I would like to thank Carole and Charu for reviewing my exam. While far outside of my comfort zone, I have learned so much this semester and look forward to continuing to explore R.
+
+
+
