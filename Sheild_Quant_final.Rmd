@@ -10,14 +10,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-if downchute does not work
-
-title: "Sheild_Quant_final"
-output: html_document
-
-
-# Final Exam
-# Ellie Sheild
 
 ## Introduction
 
@@ -25,13 +17,13 @@ I would like to thank the Broadway Business Coalition for hiring me as an analys
 
 In my previous role as Senior Planner for the City of Albemarle, NC we conducted a comprehensive parking study of our downtown. Business owners in our historic downtown district expressed significant apprehension over changing from two-way streets North-South streets to one-way and changing from parallel parking spaces to diagonal parking spaces, which would increase the number of available spaces. There was also strong political opinions from Council on metering downtown spaces. 
 
-I have experienced first hand how data on impacts to local business on parking changes can help provide clarity for planning issues,and appreciate this opportunity to run an analysis using R.
+I have experienced first hand how data on impacts to local business on parking changes can help provide clarity for planning issues, and appreciate this opportunity to run an analysis using R.
 
 ## Disclaimer
 
-I also feel it is important to acknowledge my own biases and limitations as a researcher in presenting this data. In my below data report, I will strive to clearly summarize and present in the most objective manner possible. However, there could be measurement errors, sampling errors, and modeling errors with this report the following 4 questions the Coalition has asked me to research.
+I also feel it is important to acknowledge my own biases and limitations as a researcher in presenting this data. In my below data report, I will strive to clearly summarize and present in the most objective manner possible. However, there could be measurement errors, sampling errors, and modeling errors within this report of the following 4 questions the Coalition has asked me to research.
 
-There are benefits to mixed methods approach that includes both quantitative and qualitative data. Thus, I encourage the Commission to supplement the quantitative data with qualitative research on the desires of customers for each of their businesses. 
+There are benefits to mixed methods approach that includes both quantitative and qualitative data. Thus, I encourage the Commission to supplement the quantitative data with qualitative research on the desires of customers and other stakeholders for each of these types of businesses. 
 
 ## Data Source
 
@@ -56,7 +48,7 @@ The following variables 6 were collected:
 
 ## Load Libraries
 
-```{r load libraries, message=FALSE}
+```{r load libraries, message=FALSE, warning=FALSE}
 
 library(tidyverse)
 library(interactions)
@@ -65,7 +57,7 @@ library(interactions)
 
 ## Load Data
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 Main_St_data <- read.csv("exam_data_esheild.csv")
 ```
@@ -74,18 +66,21 @@ Main_St_data <- read.csv("exam_data_esheild.csv")
 
 What is the average change in sales for Main Street businesses? Did sales increase or decrease, on average? How confident are you about that.
 
-The best method for solving question 1 is to run a one sample T-Test. A T-test is used to determine if there is a significant difference between the means of two groups, which in this case is the change in sales before to after the project. The average change means we need to find the mean.
+The best method for solving question 1 is to run a one sample T-Test. A T-test is used to determine if there is a significant difference between the means of two groups, which in this case is the change in sales before to after the project. The average change indicates that we need to find the mean.
+
+## T-Test
 
 ```{r, message=FALSE}
 
 t.test(Main_St_data$pct_sales_chng)
 
 ```
+## Results 
 
-The mean from the T-test shoes a 0.0366 or 3.66 percentage point average increase in sales from the Main Street redesign project. The 95% confidence interval from this T-test is 0.033 to 0.04, 3.3 - 4 percent, and it does not cross zero. The P-value is the likelihood that you would have gotten the result without a correlation. In this case the P-value is 2.2e-16, which is extremely close to zero and gives credibility to the test. Because the P-value is less than .001 we can be more than 99.9% confident that the sales did increase on average. This meets the social sciences standard of a 95% confidence interval.
+The mean from the T-test shows a 0.0366 or 3.66 percentage point average increase in sales from the Main Street redesign project. The 95% confidence interval from this T-test is 0.033 to 0.04, 3.3 - 4 percentage, and it does not cross zero. The P-value is the likelihood that you would have gotten the result without a correlation. In this case the P-value is 2.2e-16, which is extremely close to zero and gives credibility to the test. Because the P-value is less than .001 we can be more than 99.9% confident that the sales did increase on average. This meets the social sciences standard of a 95% confidence interval.
 
 
-# Question 2
+# Question 2:
 
 Did the cost of parking change more for some types of businesses than for others? How confident are you about those differences?
 
@@ -124,30 +119,31 @@ parking_cost_by_type <- lm(parking_cost_change ~ type, data = Main_St_data)
 
 summary(parking_cost_by_type)
 ```
+## Results by Store Type
 
-Recall for this variable, positive number indicates an increase in the cost of parking. The adjusted R-square value in the table indicates the model fit. The intercept is what says the average change in parking cost for the base case, Clothing Stores, was an increase of 0.094, or 9.4 percentage points.The positive change, or increase in parking cost for Clothing Stores, is statically significant at the 99.9% confidence level.
+Recall for this variable, positive number indicates an increase in the cost of parking. The adjusted R-squared value in the table indicates the model fit. The intercept is what says the average change in parking cost for the base case, Clothing Stores, which was an increase of 0.0943, or 9.43 percentage points. The positive change, or increase in parking cost for Clothing Stores, is statically significant at the 99.9% confidence level.
 
 After that we compare all the different types of stores to that.
 
 Bookstores parking costs increase 0.015, or 1.5 percentage points, more than the base case. This is significant at the 95% confidence interval.
 
-Drugstore's parking costs increased 0.014, or 1.4  percentage points, more than the base case. however, the P-value is slightly greater than 0.05, and thus is not considered statically significant at the 95% confidence interval. This is the only variable that did not yield a statically significant result.
+Drugstore's parking costs increased 0.014, or 1.4  percentage points, more than the base case. However, the P-value is slightly greater than 0.05, and thus is not considered statically significant at the 95% confidence interval. This is the only variable that did not yield a statically significant result.
 
-Furniture's parking costs increased 0.081, or 8.16 percentage points, less than the base case. Meaning there was a 1.27 percentage point increase for furniture stores overall (0.0943 - 0.0816 = 0.0127).
+Furniture's parking costs increased 0.081, or 8.16 percentage points, less than the base case. Meaning there was a 1.27 percentage point increase for furniture stores parking cost overall (0.0943 - 0.0816 = 0.0127).
 
-Gas Station's parking costs increased 0.0825, or 8.25 percentage points, less than the base case. Meaning there was a 1.15 percentage point increase for gas stations overall (0.0943 - 0.0825 = 0.0115).
+Gas Station's parking costs increased 0.0825, or 8.25 percentage points, less than the base case. Meaning there was a 1.15 percentage point increase for gas stations parking cost overall (0.0943 - 0.0825 = 0.0115).
 
-Grocery Stores' parking costs increased 0.0536, or 5.36 percentage points, less than the base case. Meaning there was a 4.07 percentage point increase for grocery stores overall (0.0943 - 0.0536 = 0.0407).
+Grocery Stores' parking costs increased 0.0536, or 5.36 percentage points, less than the base case. Meaning there was a 4.07 percentage point increase for grocery stores parking cost overall (0.0943 - 0.0536 = 0.0407).
 
-Restaurant's parking cost increased 0.0629, or 6.29 percentage points, more than the base case. Meaning there was a 15.72 percentage point increase for restaurants overall (0.0943 + 0.0629 = .1572).
+Restaurant's parking cost increased 0.0629, or 6.29 percentage points, more than the base case. Meaning there was a 15.72 percentage point increase for restaurants parking cost overall (0.0943 + 0.0629 = .1572).
 
 The following variables, except Drug stores, are statistically significant, because the P value is less than 0.05. We are at least 95% confident that all of these stores, excluding drug stores, had statically significant increases in parking costs.
 
-# Question 3
+# Question 3:
 
 Not counting any kind of effect of the changes to parking and cycling have had, what kind of effect did it have on businesses if the closest transit stop got closer or further away?
 
-In this question, we assess the effect of transit stop distance to the business of sales. By not "counting any kind of effect," it means we are controlling for those variables. The below code controls for the variables of changes to parking supply, changes in parking price, and any additional changes in cycling traffic to take them into consideration.
+In this question, we assess the effect of transit stop distance to the businesses' sales. By not "counting any kind of effect," it means we are controlling for those variables. The below code controls for the variables of changes to parking supply, changes in parking price, and any additional changes in cycling traffic to take them into consideration.
 
 This means it is best to run a regression model, lm function, to predict the effects of the change in distance to transit on the percent change in sales. The summary function is what produces a table to interpret.
 
@@ -159,12 +155,13 @@ model_q3 <- lm(pct_sales_chng ~ transit_dist + parking_cost_change + lost_parkin
 summary(model_q3)
 
 ```
+## Results
 
-For every 1 mile increase in the distance from a transit stop, sales decreased by 0.2116, or 21.16 percentage points. This controls for parking cost change, lost parking, and bike changes. 
+For every 1 mile increase in the distance from a transit stop, sales decreased by 0.2116, or 21.16 percentage points on average. This controls for parking cost change, lost parking, and bike changes. 
 
 This is statistically significant at the 99.9% confidence interval indicated by the P-value, so meets the social sciences threshold of 95% confidence interval. 
 
-# Question 4
+# Question 4:
 
 Was the effect of transit on sales different for some types of businesses than for others? What was the difference, if any?
 
@@ -178,13 +175,13 @@ model_q4 <- lm(pct_sales_chng ~ type + transit_dist + parking_cost_change + lost
 summary(model_q4)
 ```
 
-In interpreting this model, it is best to first look at the effect of transit distance on the base case, Clothing stores. Each additional increase of one mile from a transit stop, Clothing stores sales decrease by .3548, or 35.48 percentage points. The low P-value indicates that this is statistically significant at the 99.9% confidence interval, which meets the standard 95%, so we can just say it is statically significant at the standards 95% confidence interval.
+In interpreting this model, it is best to first look at the effect of transit distance on the base case, Clothing stores. Each additional increase of one mile from a transit stop, Clothing stores sales decrease by .3548, or 35.48 percentage points on average. The low P-value indicates that this is statistically significant at the 99.9% confidence interval, which meets the standard 95%, so we can just say it is statically significant at the standards 95% confidence interval.
 
-The Adjusted R Square of this regression 0.6672 indicates the model fit/prediction, which when compared to the above model of .32, is double the improved model fit.
+The Adjusted R Squared of this regression 0.6672 indicates the model fit/prediction, which when compared to the above model of .32, is double the improved model fit.
 
 ## Displaying these results
 
-The added visual is a good way to confirm my interpret ions of results from the regression model, so I have elected to display these results and then provide interpretations for each store type below. 
+The added visual is a good way to confirm my interpretations of results from the regression model, so I have elected to display these results and then provide interpretations for each store type below. 
 
 ```{r}
 
@@ -195,35 +192,35 @@ interact_plot(model_q4, pred = transit_dist, interval = TRUE, modx = type)
 
 Now that we know the effect of transit distance to percent change in sales on the base case, Clothing Stores (blue line), we compare the other types of stores to the base case.
 
-The visual (steepness/slope of the curve) is also a good indicator of the effect of transit distance on percent change in sales. The steeper the curve, the greater the effect of transit distance on sales.  All other types are positive/negative, which means the % change in sales impacted by transit distant was LESS/MORE for each of those store types, respectively. If it is the same signs to the base case (-) it magnifies the effect of transit distance, if it is the opposite sign, it diminishes the effect of transit distance. Let's look at some examples.
+The visual (steepness/slope of the curve) is also a good indicator of the effect of transit distance on percent change in sales. The steeper the curve, the greater the effect of transit distance on sales.  All other types are positive/negative, which means the % change in sales impacted by transit distant was LESS/MORE for each of those store types to the base case, respectively. If it is the same signs to the base case (-) it magnifies the effect of transit distance, if it is the opposite sign, it diminishes the effect of transit distance. Let's look at some examples.
 
-### Book Stores (orange hashed line)
+## Book Stores (orange hashed line)
 
 For example, Book stores value is -0.0377, meaning that the impact was 3.77 percentage points more than Clothing stores. When you take -0.3548 - 0.0377 = -0.3927. So Book stores sales deceased 39.27 percentage points for every 1 mile increase of distance to transit stops. However, this is not statically significant at the 95% confidence interval. 
 
-### Drug Stores (green hashed line)
+## Drug Stores (green hashed line)
 
 This relationship is also NOT statistically significant at the 95% confidence interval, as indicated by a higher P value, and does not meet the social sciences threshold of a 95% confidence interval. Nonetheless, Drugstores sales decreased 0.06437 percentage points less than Clothing Stores. For everyone 1 mile increase of distance to transit stores, Drug Store sales decreased 29.04 percentage points (-0.3548 + 0.06437 = -.29043).
 
-### Furniture Stores (pink hashed line)
+## Furniture Stores (pink hashed line)
 
-Furniture Stores is statically significant. When compared to the base case, -0.3548 + 0.3588 = 0.004., So for furniture stores, there is a .4 percentage positive change in sales for every 1 mile increase in distance to transit stops. Because this number is basically 0, and is statically significant, we can conclude that for every 1 mile increase in distance to transit stops, % change in sales for furniture stores was more or less unaffected. On the above graph, If the slope is close to zero, there is no relationship between the two variables.
+Furniture Stores is statically significant. When compared to the base case, -0.3548 + 0.3588 = 0.004., So for furniture stores, there is a .4 percentage point positive change in sales for every 1 mile increase in distance to transit stops. Because this number is basically 0, and is statically significant, we can conclude that for every 1 mile increase in distance to transit stops, % change in sales for furniture stores was more or less unaffected. On the above graph, If the slope is close to zero, there is no relationship between the two variables.
 
-### Gas Stations (blue hashed line)
+## Gas Stations (blue hashed line)
 
 Gas stations is a similar result to furniture stores, in that it is statistically significant and slightly positive. When compared to the base-case: (-0.3548 + 0.3964 = 0.0416). So for every 1 mile increase in distance from a transit stop gas station sales increased by 4.16 percentage points.
 
-### Grocery Stores (yellow hashed line)
+## Grocery Stores (yellow hashed line)
 
 Similarly, Grocery Stores is statically significant and slightly positive. When compared to the base-case: (-0.3548 + 0.3683 = 0.0135). So for everyone 1 mile increase in distance to transit stops, grocery stores saw a 1.35 percentage point increase in sales.
 
-### Restaurants (grey hashed line)
+## Restaurants (grey hashed line)
 
 Finally, Restaurants had a slightly decreased negative impact on sales when compared to the base case of Clothing Stores. This is statically significant. (-0.3548 + 0.1680 = -.1868) So for everyone 1 mile increase in distance to transit stops, restaurants on Main Street had a decreased in percent sales change by 18.68 percentage points. 
 
 # Conclusion
 
-The above regressions and analysis overall shows an impact of the Main street redesign on local business, however this project affected the types of businesses in different ways. I urge the Broadway Business Coalition to review these results and come to their own conclusions regarding the Broadway redesign as well as supplement these findings with qualative analysis from other stakeholders.
+The above regressions and analysis overall shows an impact of the Main street redesign on local business, however this project affected the types of businesses in different ways. I urge the Broadway Business Coalition to review these results and come to their own conclusions regarding the Broadway redesign as well as supplement these findings with qualitative analysis from other stakeholders.
 
 # Thank you
 
