@@ -1,11 +1,17 @@
 ---
 title: "Sheild_Quant_final"
-output: html_document
+author: "Ellie Sheild"
+date: "12/03/2021"
+output: 
+  rmdformats::downcute
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+title: "Sheild_Quant_final"
+output: html_document
+
 
 # Final Exam
 # Ellie Sheild
