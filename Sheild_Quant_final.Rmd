@@ -22,11 +22,11 @@ I would like to thank the Broadway Business Coalition for hiring me as an analyi
 
 In my previous role as Senior Planner for the City of Albemarle, NC we conducted a comprehensive parking study of our downtown. Business owners in our historic downtown district expressed significant apprehension over changing from two-way streets North-South streets to one-way and changing from parallel parking spaces to diagonal parking spaces, which would increase the number of available spaces. There was also strong political opinions from Council on metering downtown spaces. 
 
-I have experienced first hand how data on impacts to local business on parking changes can help provide clarity for planning issues,and appreciate this opportunity to run an analsysis using R.
+I have experienced first hand how data on impacts to local business on parking changes can help provide clarity for planning issues,and appreciate this opportunity to run an analysis using R.
 
 ## Disclaimer
 
-I also feel it is important to acknowledged my own biases and limitations as a researcher in presenting this data. In my below data report, I will strive to clearly summarize and present in the most objective manner possible. However, there could be measurement errors, sampling errors, and modeling errors with this report the following 4 questions the Coalition has asked me to research.
+I also feel it is important to acknowledge my own biases and limitations as a researcher in presenting this data. In my below data report, I will strive to clearly summarize and present in the most objective manner possible. However, there could be measurement errors, sampling errors, and modeling errors with this report the following 4 questions the Coalition has asked me to research.
 
 There are benefits to mixed methods approach that includes both quantitative and qualitative data. Thus, I encourage the Commission to supplement the quantitative data with qualitative research on the desires of customers for each of their businesses. 
 
@@ -36,12 +36,17 @@ The following data was obtained from the City of Townsville. It includes data co
 
 The following variables 6 were collected:
 
-* % Change in sales at each Main Street Business
-* Change in distance from each business to nearest transit stop
-* Type of business - this is an example of a categorical variable
-* Change in the cost of parking adjacent to the business
-* Change in the number of curbside parking spaces adjacent to the business
-* % Change in average daily bike traffic on the block adjacent to the sire.
+*pct_sales_chng: % Change in sales at each Main Street Business. Positive value means sales increased.Based on the questions, this serves as a dependent variable.
+
+* transit_dist: Change in distance (miles) from each business to nearest transit stop after the streetcar service.
+
+* type: Type of business - this is an example of a categorical variable. Clothing, Furniture, Gas station, Drugstore, Books, or Restaurant 
+
+* parking_cost_change: % Change in the cost of parking adjacent to the business. positive value means increase in cost of parking
+
+* lost_parking: number of curbside parking spaces lost to adjacent to the business for the redesign. *note positive numbers still represent a loss
+
+* bike_chng: % Change in average daily bike traffic on the block adjacent to the store after the project opened. Positive value means bike volumes increased.
 
 
 # Setup
@@ -59,7 +64,7 @@ library(interactions)
 
 ```{r, message=FALSE}
 
-Main_St_data <- read.csv("finalexam_sampledata.csv")
+Main_St_data <- read.csv("exam_data_esheild.csv")
 ```
 
 # Question 1:
